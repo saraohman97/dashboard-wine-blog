@@ -27,6 +27,9 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { useState } from "react";
+import { useToast } from "@/components/ui/use-toast";
+import { useRouter } from "next/navigation";
+import { getRandomValues } from "crypto";
 
 const formSchema = z.object({
   name: z.string().min(2, {
@@ -38,7 +41,7 @@ const formSchema = z.object({
   land: z.string().min(2, {
     message: "Username must be at least 2 characters.",
   }),
-  price: z.number().min(2, {
+  price: z.string().min(2, {
     message: "Username must be at least 2 characters.",
   }),
 });
@@ -46,12 +49,22 @@ const formSchema = z.object({
 enum STEPS {
   INFO = 0,
   DESCRIPTION = 1,
-  IMAGES = 2, 
-  TASTE = 3
+  IMAGES = 2,
+  TASTE = 3,
 }
 
 const AddNewWine = () => {
-  const [step, setStep] = useState(STEPS.INFO)
+  const { toast } = useToast();
+  const router = useRouter();
+  const [step, setStep] = useState(STEPS.INFO);
+
+  const onBack = () => {
+    setStep((value) => value - 1);
+  };
+
+  const onNext = () => {
+    setStep((value) => value + 1);
+  };
 
   // 1. Define your form.
   const form = useForm<z.infer<typeof formSchema>>({
@@ -60,7 +73,7 @@ const AddNewWine = () => {
       name: "",
       label: "",
       land: "",
-      price: 0,
+      price: "",
     },
   });
 
@@ -68,7 +81,16 @@ const AddNewWine = () => {
   function onSubmit(values: z.infer<typeof formSchema>) {
     // Do something with the form values.
     // ✅ This will be type-safe and validated.
-    console.log(values);
+
+    if (step !== STEPS.TASTE) {
+      return onNext();
+    } else {
+      toast({
+        title: "Values:",
+        description: `${values}`,
+      });
+      // router.refresh();
+    }
   }
 
   return (
@@ -90,71 +112,80 @@ const AddNewWine = () => {
 
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-
-                {/* FIRST STEP */}
-              <FormField
-                control={form.control}
-                name="name"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Namn</FormLabel>
-                    <FormControl>
-                      <Input placeholder="Toscana" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="label"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Märke</FormLabel>
-                    <FormControl>
-                      <Input placeholder="Villa Puccini" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <div className="flex gap-4 w-full">
-              <FormField
-                  control={form.control}
-                  name="price"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Pris</FormLabel>
-                      <FormControl>
-                        <Input
-                          placeholder="99 kr"
-                          className="w-full"
-                          {...field}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="land"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Land</FormLabel>
-                      <FormControl>
-                        <Input
-                          placeholder="Italien"
-                          className="w-min"
-                          {...field}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-              </div>
+              {/* FIRST STEP */}
+              {step === STEPS.INFO && (
+                <>
+                  <FormField
+                    control={form.control}
+                    name="name"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Namn</FormLabel>
+                        <FormControl>
+                          <Input placeholder="Toscana" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="label"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Märke</FormLabel>
+                        <FormControl>
+                          <Input placeholder="Villa Puccini" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </>
+              )}
+              {step === STEPS.DESCRIPTION && (
+                <>
+                  <div className="flex gap-4 w-full">
+                    <FormField
+                      control={form.control}
+                      name="price"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Pris</FormLabel>
+                          <FormControl>
+                            <Input
+                              placeholder="99 kr"
+                              className="w-full"
+                              // type="number"
+                              {...field}
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={form.control}
+                      name="land"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Land</FormLabel>
+                          <FormControl>
+                            <Input
+                              placeholder="Italien"
+                              className="w-min"
+                              {...field}
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+                </>
+              )}
+              {step === STEPS.IMAGES && <>Images</>}
+              {step === STEPS.TASTE && <>Taste</>}
 
               {/* SECOND STEP */}
               {/* <FormField
@@ -170,14 +201,25 @@ const AddNewWine = () => {
                   </FormItem>
                 )}
               /> */}
+              <DialogFooter className="grid grid-cols-2 gap-4">
+                <Button
+                  variant="secondary"
+                  onClick={onBack}
+                  disabled={step === STEPS.INFO ? true : false}
+                >
+                  Tillbaka
+                </Button>
+                <Button
+                  // type={step === STEPS.TASTE ? "submit" : "button"}
+                  type="submit"
+                  // onClick={step === STEPS.TASTE ? onSubmit : onNext}
+                  onClick={onNext}
+                >
+                  Nästa
+                </Button>
+              </DialogFooter>
             </form>
           </Form>
-
-
-          <DialogFooter className="grid grid-cols-2 gap-4">
-            <Button variant="secondary">Tillbaka</Button>
-            <Button type="submit">Nästa</Button>
-          </DialogFooter>
         </DialogContent>
       </Dialog>
     </div>

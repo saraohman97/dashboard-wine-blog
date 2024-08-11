@@ -18,6 +18,7 @@ import { User as UserIcon } from "lucide-react";
 import { LuSunMoon } from "react-icons/lu";
 import { IoMoonOutline, IoSunnyOutline } from "react-icons/io5";
 import { MdComputer } from "react-icons/md";
+import { IoIosLogOut } from "react-icons/io";
 
 const User = () => {
   const { setTheme } = useTheme();
@@ -59,6 +60,11 @@ const User = () => {
             </DropdownMenuSubContent>
           </DropdownMenuPortal>
         </DropdownMenuSub>
+
+        <DropdownMenuItem>
+          <IoIosLogOut size={15} />
+          Logga ut
+        </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
   );
