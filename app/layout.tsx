@@ -4,6 +4,8 @@ import "./globals.css";
 import Navbar from "@/components/navbar";
 import { ThemeProvider } from "@/components/theme-provider";
 import { Toaster } from "@/components/ui/toaster";
+import { Modal } from "@/components/modals/modal";
+import AddWineModal from "@/components/modals/add-wine-modal";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -17,6 +19,8 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const currentUser = false;
+
   return (
     <html lang="en">
       <body className={inter.className}>
@@ -26,7 +30,8 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <Navbar />
+          <AddWineModal />
+          {currentUser && <Navbar />}
           {children}
           <Toaster />
         </ThemeProvider>

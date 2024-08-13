@@ -1,10 +1,13 @@
 import WineTable from "./components/client";
-import { User } from "lucide-react";
+import { Plus } from "lucide-react";
 import { PiCircleDuotone, PiCircleFill } from "react-icons/pi";
-import AddNewWine from "./components/add-new-wine";
-import Link from "next/link";
+import { Button } from "@/components/ui/button";
+import useAddWineModal from "@/hooks/useAddWineModal";
+import Client from "./components/client";
 
 const WinesPage = () => {
+  // const addWineModal = useAddWineModal()
+
   return (
     <>
       <div className="max-w-screen-xl mx-auto flex lg:gap-10">
@@ -34,18 +37,7 @@ const WinesPage = () => {
             </div>
           </div>
         </div>
-        <div className="w-full mt-10">
-          <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-3xl font-bold">Vinlista</h1>
-              <h2 className="font-bold text-gray-500">
-                This is your CMS grid
-              </h2>
-            </div>
-            <AddNewWine />
-          </div>
-          <WineTable />
-        </div>
+        <Client />
       </div>
     </>
   );
