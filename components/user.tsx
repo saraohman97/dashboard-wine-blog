@@ -20,6 +20,8 @@ import { IoMoonOutline, IoSunnyOutline } from "react-icons/io5";
 import { MdComputer } from "react-icons/md";
 import { IoIosLogOut } from "react-icons/io";
 
+import { signOut } from "next-auth/react";
+
 const User = () => {
   const { setTheme } = useTheme();
 
@@ -61,7 +63,7 @@ const User = () => {
           </DropdownMenuPortal>
         </DropdownMenuSub>
 
-        <DropdownMenuItem>
+        <DropdownMenuItem onClick={() => signOut()}>
           <IoIosLogOut size={15} />
           Logga ut
         </DropdownMenuItem>

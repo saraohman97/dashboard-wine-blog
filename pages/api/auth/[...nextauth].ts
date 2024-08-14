@@ -3,8 +3,7 @@ import NextAuth, { AuthOptions } from "next-auth"
 import { PrismaAdapter } from "@next-auth/prisma-adapter"
 import CredentialsProvider from "next-auth/providers/credentials"
 
-// import prisma from "@/lib/prismadb"
-import prisma from '../../../lib/prismadb'
+import prisma from "@/lib/prismadb"
 
 export const authOptions: AuthOptions = {
   adapter: PrismaAdapter(prisma),
@@ -44,7 +43,7 @@ export const authOptions: AuthOptions = {
     })
   ],
   pages: {
-    signIn: '/',
+    signIn: '/login',
   },
   debug: process.env.NODE_ENV === 'development',
   session: {
